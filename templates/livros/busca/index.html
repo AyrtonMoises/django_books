@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+
+{% include 'livros/livros/index.html' %}
+
+{% if not livros%}
+<p class="text-center">Nenhum resultado encontrado</p>
+{% endif %}
+
+{% endblock %}

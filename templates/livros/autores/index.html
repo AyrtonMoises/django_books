@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="px-4 mb-4">
+        <h3>Autores</h3>
+
+        {% if autores %}
+        <p>Escolha um para ler</p>
+    
+        <div class="row row-cols-1 row-cols-md-4 g-4">
+        {% for autor in autores %}
+        <div class="col">
+            <a class="text-decoration-none" href="{% url 'livros_por_autor' autor.id %}">
+                <div class="card">
+                    {% if autor.imagem == '' %}
+                    <img class="card-img-top" height="200px" src="{% static 'img/autor_default.jpg' %}" alt="{{ autor.nome }}">
+                    {% else %}
+                    <img class="card-img-top" height="200px" src="{{ autor.imagem.url }}" alt="{{ autor.nome }}">
+                    {% endif %}
+                    <div class="card-body">
+                        <h5 class="card-title text-dark">{{ autor.nome }}</h5>
+                        <p>
+                        {% for categoria in autor.categorias_autor %}
+                            <span class="badge rounded-pill bg-primary">{{ categoria.descricao }}</span>
+                        {% endfor %}
+                        </p>
+                    </div>
+                </div>
+            </a>
+        </div>
+        {% endfor %}
+        {% else %}
+        <div class="row">
+            <p class="text-center">Nenhum resultado encontrado</p>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

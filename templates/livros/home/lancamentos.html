@@ -1,0 +1,31 @@
+{% load static %}
+<div class="px-4 mb-4">
+    <h3>Lançamentos</h3>
+    <p>Leia os últimos lançamentos</p>
+
+    <div class="row row-cols-1 row-cols-md-4 g-4">
+        {% for livro in livros %}
+        <div class="col">
+            <div class="card">
+                {% if livro.imagem == '' %}
+                <img class="card-img-top" height="200px" src="{% static 'img/livro_default.jpg' %}" alt="{{ livro.descricao }}">
+                {% else %}
+                <img class="card-img-top" height="200px" src="{{ livro.imagem.url }}" alt="{{ livro.descricao }}">
+                {% endif %}
+                <div class="card-body">
+                    <h5 class="card-title">{{ livro.descricao }}</h5>
+                    <p class="card-text">
+                        {{ livro.autor.nome }}
+                    </p>
+                    <p>
+                        {% for categoria in livro.categorias.all %}
+                            <span class="badge rounded-pill bg-primary">{{ categoria.descricao }}</span>
+                        {% endfor %}
+                    </p>
+                        <a href="#" class="btn btn-primary"><i class="bi bi-book-half"></i> Ler online</a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
