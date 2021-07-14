@@ -1,5 +1,7 @@
 {% extends 'base.html' %}
+
 {% load static %}
+{% load template_tags %}
 
 {% block content %}
 
@@ -7,7 +9,7 @@
 <div class="px-4 mb-4">
     <h3>Livros</h3>
 
-    <div class="row row-cols-1 row-cols-md-4 g-4">
+    <div class="row row-cols-1 row-cols-md-6 g-4">
         {% for livro in livros %}
         <div class="col">
             <div class="card">
@@ -26,7 +28,19 @@
                             <span class="badge rounded-pill bg-primary">{{ categoria.descricao }}</span>
                         {% endfor %%}                       
                     </p>
-                    <a href="#" class="btn btn-primary"><i class="bi bi-book-half"></i> Ler online</a>
+                    
+                    {% if livro.estoque %}
+                        {% if livro.melhor_desconto %}
+                            <s>R$ {{livro.valor}}</s>
+                            <h5>R$ {{ livro.valor|valor_descontado:livro.melhor_desconto }} </h5>
+                            <p><span class="badge rounded-pill bg-success">Desconto {{ livro.melhor_desconto }}%</span></p>
+                        {% else %}
+                            <h5>R$ {{livro.valor}}</h5>
+                        {% endif %}
+                        <a href="{{ livro.arquivo_pdf.url }}" class="btn btn-primary"><i class="bi bi-tag-fill"></i> Comprar</a>
+                    {% else %}
+                        <a href="#" class="btn btn-secondary disabled"><i class="bi bi-tag-fill"></i> Indisponível</a>
+                    {% endif %}
                 </div>
             </div>
         </div>

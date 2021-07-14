@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import Editora, Autor, Categoria, Livro
+from .models import Editora, Autor, Categoria, Livro, Promocao
 
 from .forms import CategoriaForm, LivroForm
 
@@ -31,7 +31,7 @@ class CategoriaAdmin(admin.ModelAdmin):
 
 class LivroAdmin(admin.ModelAdmin):
     readonly_fields = ["data_criacao"]
-    list_display = ('id', 'descricao', 'editora', 'autor', 'valor', 'ativo',)
+    list_display = ('id', 'descricao', 'editora', 'autor', 'estoque', 'valor', 'ativo',)
     list_display_links = ('id', 'descricao',)
     list_filter = ('categorias',)
     list_editable = ('ativo',)
@@ -44,11 +44,21 @@ class LivroAdmin(admin.ModelAdmin):
                        'encadernacao', ('idioma', 'pais'),)
         }),
         ('Disponibilidade e valor', {
-            'fields': ('valor', 'ativo',)
+            'fields': ('valor', 'estoque', 'ativo',)
         })
     )
+
+
+class PromocaoAdmin(admin.ModelAdmin):
+    list_display = ('id', 'descricao', 'data_inicio','data_fim', 'ativo',)
+    list_display_links = ('id', 'descricao',)
+    list_editable = ('ativo',)
+    list_filter = ('ativo',)
+
+    list_per_page = 15
 
 admin.site.register(Editora, EditoraAdmin)
 admin.site.register(Autor, AutorAdmin)
 admin.site.register(Categoria, CategoriaAdmin)
 admin.site.register(Livro, LivroAdmin)
+admin.site.register(Promocao, PromocaoAdmin)

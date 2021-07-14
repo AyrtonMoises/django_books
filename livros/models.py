@@ -74,14 +74,47 @@ class Livro(models.Model):
     ean = models.CharField(max_length=13, verbose_name='EAN')
     ativo = models.BooleanField()
     imagem = ResizedImageField(size=[500, 300], quality=70, upload_to='livros/', blank=True, null=True)
-    valor = models.DecimalField(max_digits=5, decimal_places=2)
+    valor = models.DecimalField(max_digits=6, decimal_places=2)
     autor = models.ForeignKey(Autor, on_delete=models.CASCADE, related_name='autor_livro')
     editora = models.ForeignKey(Editora, on_delete=models.CASCADE, related_name='editora_livro')
     categorias = models.ManyToManyField(Categoria)
     data_criacao = models.DateField(default=timezone.now, verbose_name='Data de criação')
+    estoque = models.PositiveSmallIntegerField()
 
     def __str__(self):
         return self.descricao
+
+    @property
+    def melhor_desconto(self):
+        """Retorna promoção de maior desconto ao livro dentro da data e se ativo"""
+        melhor_desconto = 0
+        for categoria in self.categorias.all():
+            promocao = Promocao.objects.filter(
+                categorias__pk=categoria.pk, ativo=True,
+                data_inicio__lte=datetime.date.today(),
+                data_fim__gte=datetime.date.today()
+                ).order_by('-desconto').first()
+            if promocao:
+                if melhor_desconto < promocao.desconto:
+                    melhor_desconto = promocao.desconto
+        return melhor_desconto
+
+
+class Promocao(models.Model):
+    descricao = models.CharField(max_length=150, verbose_name='Descrição')
+    desconto = models.PositiveSmallIntegerField(validators=[MinValueValidator(1), MaxValueValidator(99)])
+    data_inicio = models.DateField()
+    data_fim = models.DateField()
+    categorias = models.ManyToManyField(Categoria, related_name='categorias_promocao')
+    ativo = models.BooleanField()
+
+    class Meta:
+        verbose_name_plural = "Promoções"
+        verbose_name = "Promoção"
+
+    def __str__(self):
+        return self.descricao
+
 
 @receiver(post_save, sender=Editora)
 def editora_altera_status(sender, instance, created, **kwargs):

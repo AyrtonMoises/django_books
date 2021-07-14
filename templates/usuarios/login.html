@@ -28,7 +28,7 @@
     </symbol>
   </svg>
   <main class="form-signin">
-    <form action="{% url 'login' %}" method="POST">
+    <form id="login" action="{% url 'login' %}" method="POST">
       {% csrf_token %}
       <svg class="bi me-2" width="72" height="57" role="img" aria-label="Django-Books"><use xlink:href="#django-books"/></svg>
       <h1 class="h3 mb-3 fw-normal">Django Books</h1>
@@ -45,13 +45,34 @@
 
       <div class="checkbox mb-3">
         <label>
-          <input type="checkbox" value="remember-me"> Lembrar-me!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! criar
+          <input id="remember" type="checkbox"> Lembrar-me
         </label>
       </div>
       <button class="w-100 btn btn-lg btn-primary" type="submit">Entrar</button>
       <p class="mt-5 mb-3 text-muted">Django Books © {% now 'Y' %}</p>
     </form>
   </main>
+
+<script>
+
+window.onload = () => {
+  document.getElementsByName("email")[0].value = localStorage.getItem("email");
+  document.getElementById("remember").checked = localStorage.getItem("remember");
+}
+
+document.getElementById("login").onsubmit = () => {
+  
+    if(document.getElementById("remember").checked) {
+      localStorage.setItem('email', document.getElementsByName("email")[0].value);
+      localStorage.setItem('remember', document.getElementById("remember").checked);
+    }else{
+      localStorage.removeItem('email');
+      localStorage.removeItem('remember');
+    }
+
+};
+
+</script>
 
 </body>
 
