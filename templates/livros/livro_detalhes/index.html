@@ -20,7 +20,7 @@
                         <p>Por: <a href="{% url 'livros_por_autor' livro.autor.id %}">{{ livro.autor.nome }}</a></p>
                         <p>Editora: <a href="{% url 'livros_por_editora' livro.editora.id %}">{{ livro.editora.descricao }}</a></p>
 
-                        {% if livro.estoque %}
+                        {% if livro.ativo %}
                             {% if livro.desconto %}
                                 <s>R$ {{livro.valor}}</s>
                                 <h5>R$ {{ livro.valor|valor_descontado:livro.desconto }} </h5>

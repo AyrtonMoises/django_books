@@ -80,7 +80,6 @@ class Livro(models.Model):
     editora = models.ForeignKey(Editora, on_delete=models.CASCADE, related_name='editora_livro')
     categorias = models.ManyToManyField(Categoria)
     data_criacao = models.DateField(default=timezone.now, verbose_name='Data de criação')
-    estoque = models.PositiveSmallIntegerField()
     desconto = models.PositiveSmallIntegerField(default=0, validators=[MaxValueValidator(99)])
 
     def __str__(self):

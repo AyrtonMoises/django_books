@@ -58,6 +58,7 @@ def adiciona_carrinho(request, livro_id):
 
 @login_required
 def finaliza_compra(request):
+    """Finaliza compra criando o pedido"""
     session_key = request.session.session_key
     if session_key and Carrinho.objects.filter(
         carrinho_key=session_key).exists():

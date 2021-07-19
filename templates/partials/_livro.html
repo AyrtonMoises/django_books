@@ -15,7 +15,7 @@
                     <p class="card-text">
                         {{ livro.autor.nome }}
                     </p>
-                    {% if livro.estoque %}
+                    {% if livro.ativo %}
                         {% if livro.desconto %}
                             <s>R$ {{livro.valor}}</s>
                             <h5>R$ {{ livro.valor|valor_descontado:livro.desconto }} </h5>

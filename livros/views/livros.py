@@ -5,9 +5,7 @@ from livros.models import Livro, Autor, Categoria, Editora
 
 def home(request):
     """Home do site com principais destaques"""
-    livros = Livro.objects.filter(
-        ativo=True, estoque__gt=0
-        ).order_by('-id')[:6]
+    livros = Livro.objects.filter(ativo=True).order_by('-id')[:6]
     autores = Autor.objects.filter(ativo=True).order_by('-id')[:6]
     categorias = Categoria.objects.all()
     dados = { 
@@ -38,7 +36,7 @@ def livros_por_autor(request, autor_id):
     """Lista de livros por autor"""
     livros = Livro.objects.filter(
         ativo=True, autor__pk=autor_id
-        ).order_by('-ano','-estoque')
+        ).order_by('-ano','-ativo')
     dados = {
         'livros': livros
     }
@@ -48,7 +46,7 @@ def livros_por_editora(request, editora_id):
     """Lista de livros pela editora"""
     livros = Livro.objects.filter(
         ativo=True, editora__pk=editora_id
-        ).order_by('-ano','-estoque')
+        ).order_by('-ano','-ativo')
     dados = {
         'livros': livros
     }
@@ -58,7 +56,7 @@ def livros_por_categoria(request, categoria_id):
     """Lista de livros por categoria"""
     livros = Livro.objects.filter(
             ativo=True, categorias__pk=categoria_id
-            ).order_by('-estoque')
+            ).order_by('-ativo')
     dados = {
         'livros': livros
     }

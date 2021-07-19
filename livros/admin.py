@@ -30,7 +30,7 @@ class CategoriaAdmin(admin.ModelAdmin):
 
 class LivroAdmin(admin.ModelAdmin):
     readonly_fields = ["data_criacao"]
-    list_display = ('id', 'descricao', 'editora', 'autor', 'valor', 'desconto', 'estoque', 'ativo',)
+    list_display = ('id', 'descricao', 'editora', 'autor', 'valor', 'desconto', 'ativo',)
     list_display_links = ('id', 'descricao',)
     list_filter = ('categorias',)
     list_editable = ('ativo',)
@@ -44,7 +44,7 @@ class LivroAdmin(admin.ModelAdmin):
                        'encadernacao', ('idioma', 'pais'),)
         }),
         ('Disponibilidade e valor', {
-            'fields': ('valor', 'desconto', 'estoque', 'ativo',)
+            'fields': ('valor', 'desconto', 'ativo',)
         })
     )
 

@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import auth, messages
 from django.contrib.auth import get_user_model
+from django.contrib.auth.decorators import login_required
 
 
 User = get_user_model()
@@ -35,10 +36,12 @@ def login(request):
     return render(request, 'usuarios/login.html')
 
 def logout(request):
+    """Realiza logout do usuário"""
     auth.logout(request)
     return redirect('home')
 
 def cadastro(request):
+    """Cadastra usuário"""
     if request.method == 'POST':
         nome = request.POST['nome']
         email = request.POST['email']
@@ -59,3 +62,43 @@ def cadastro(request):
         messages.success(request, 'Usuário cadastrado com sucesso')
         return redirect('login')
     return render(request, 'usuarios/cadastro.html')
+
+@login_required
+def alterar_senha(request):
+    """Alteração de senha do usuário"""
+    if request.POST:
+        senha_atual = request.POST['senha_atual']
+        senha_nova = request.POST['senha1']
+        senha_confirmacao = request.POST['senha2']
+        if senha_nova != senha_confirmacao:
+            messages.error(request, 'Senhas não são iguais')
+            return redirect('alterar_senha')
+        if not senha_atual or not senha_nova:
+            messages.error(request, 'Campos Senha atual e Nova senha são obrigatórios')
+            return redirect('alterar_senha')
+        usuario = User.objects.get(pk=request.user.pk)
+        if not usuario.check_password(senha_atual):
+            messages.error(request, 'Senha atual está incorreta')
+            return redirect('alterar_senha')         
+        usuario.set_password(senha_nova)
+        usuario.save()
+        messages.success(request, 'Senha atualizada com sucesso')
+        return redirect('login')
+    return render(request, 'usuarios/alterar-senha.html')
+
+@login_required
+def perfil(request):
+    """Cadastro do usuário"""
+    if request.POST:
+        nome = request.POST['nome']
+        email = request.POST['email']
+        if not nome or not email:
+            messages.error(request, 'Campos Nome e Email são obrigatórios')
+            return redirect('perfil')
+        usuario = User.objects.get(pk=request.user.pk)
+        usuario.username = nome
+        usuario.email = email
+        usuario.save()
+        messages.success(request, 'Perfil atualizado com sucesso')
+        return redirect('perfil')
+    return render(request, 'usuarios/perfil.html')
