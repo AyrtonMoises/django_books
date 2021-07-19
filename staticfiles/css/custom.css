@@ -1,0 +1,31 @@
+.btn-success {
+    background-color: var(--bs-teal) !important;
+    border-color: var(--bs-teal) !important;
+}
+
+.text-secondary {
+    color:#b2b6b9 !important;
+}
+
+body {
+    margin-top: 150px !important;
+  }
+  @media (max-width: 979px) {
+    body {
+        margin-top: 260px!important;
+    }
+  }
+
+  html {
+    position: relative;
+    min-height: 100%;
+  }
+  body {
+    margin-bottom: 200px;
+  }
+
+  footer {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+  }

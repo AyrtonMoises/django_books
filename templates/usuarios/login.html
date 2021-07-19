@@ -30,6 +30,8 @@
   <main class="form-signin">
     <form id="login" action="{% url 'login' %}" method="POST">
       {% csrf_token %}
+      <input type="hidden" name="next" value="{{ request.GET.next }}" />
+
       <svg class="bi me-2" width="72" height="57" role="img" aria-label="Django-Books"><use xlink:href="#django-books"/></svg>
       <h1 class="h3 mb-3 fw-normal">Django Books</h1>
       {% include 'partials/_alertas.html' %}

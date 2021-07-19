@@ -1,0 +1,61 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load template_tags %}
+
+{% block content %}
+<div class="px-4 mb-4">
+       <div class="row row-cols-1 row-cols-md-2 g-4">
+            <figure class="figure">
+                {% if livro.imagem == '' %}
+                    <img src="{% static 'img/livro_default.jpg' %}" class="figure-img img-fluid rounded" alt="{{ livro.descricao }}">
+                {% else %}
+                    <img src="{{ livro.imagem.url }}" class="figure-img img-fluid rounded" alt="{{ livro.descricao }}">
+                {% endif %}
+                <figcaption class="figure-caption">Imagem meramente ilustrativa</figcaption>
+            </figure>
+            <div class="col">
+                <div class="card h-100">
+                    <div class="card-body">
+                    <h3>{{ livro.descricao }}</h3>
+                        <p>Por: <a href="{% url 'livros_por_autor' livro.autor.id %}">{{ livro.autor.nome }}</a></p>
+                        <p>Editora: <a href="{% url 'livros_por_editora' livro.editora.id %}">{{ livro.editora.descricao }}</a></p>
+
+                        {% if livro.estoque %}
+                            {% if livro.desconto %}
+                                <s>R$ {{livro.valor}}</s>
+                                <h5>R$ {{ livro.valor|valor_descontado:livro.desconto }} </h5>
+                                <p><span class="badge rounded-pill bg-success">Desconto {{ livro.desconto }}%</span></p>
+                            {% else %}
+                                <h5>R$ {{livro.valor}}</h5>
+                            {% endif %}
+                            <p><a href="{% url 'adiciona_carrinho' livro.id %}" class="btn btn-primary"><i class="bi bi-tag-fill"></i> Comprar</a></p>
+                        {% else %}
+                            </p><a href="#" class="btn btn-secondary disabled"><i class="bi bi-tag-fill"></i> Indisponível</a></p>
+                        {% endif %}
+                            <p>   
+                            {% for categoria in livro.categorias.all %}
+                                <span class="badge rounded-pill bg-info">{{ categoria.descricao }}</span>
+                            {% endfor %%}                       
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <h4>Informações</h4>
+        <p>{{ livro.detalhes }}</p>
+        <table class="table">
+            <tbody>
+                <tr class="table-light"><th>ISBN</th><td>{{ livro.isbn }}</td></tr>
+                <tr class="table-light"><th>Editora</th><td>{{ livro.editora.descricao }}</td></tr>
+                <tr class="table-light"><th>Autor</th><td>{{ livro.autor.nome }}</td></tr>
+                <tr class="table-light"><th>Ano</th><td>{{ livro.ano }}</td></tr>
+                <tr class="table-light"><th>Edição</th><td>{{ livro.edicao }}</td></tr>
+                <tr class="table-light"><th>Encadernação</th><td>{{ livro.get_encadernacao_display }}</td></tr>
+                <tr class="table-light"><th>Idioma</th><td>{{ livro.get_idioma_display }}</td></tr>
+                <tr class="table-light"><th>País</th><td>{{ livro.get_pais_display }}</td></tr>
+                <tr class="table-light"><th>EAN</th><td>{{ livro.ean }}</td></tr>
+            </tbody>
+        </table>
+</div>
+
+{% endblock %}

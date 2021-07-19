@@ -22,6 +22,9 @@ def login(request):
             user = auth.authenticate(request, username=username, password=senha)
             if user is not None:
                 auth.login(request, user)
+                proxima_pagina = request.POST.get('next')
+                if proxima_pagina:
+                    return redirect(proxima_pagina)
                 return redirect('home')
             else:
                 messages.error(request, "Email ou Senha está incorreto")

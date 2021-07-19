@@ -1,0 +1,40 @@
+{% load static %}
+{% load template_tags %}
+   <div class="row row-cols-1 row-cols-md-6 g-4">
+        {% for livro in livros %}
+        <div class="col">
+            <a class="text-decoration-none text-dark" href="{% url 'livro_detalhes' livro.id %}">
+            <div class="card">
+                {% if livro.imagem == '' %}
+                <img class="card-img-top" height="200px" src="{% static 'img/livro_default.jpg' %}" alt="{{ livro.descricao }}">
+                {% else %}
+                <img class="card-img-top" height="200px" src="{{ livro.imagem.url }}" alt="{{ livro.descricao }}">
+                {% endif %}
+                <div class="card-body">
+                    <h5 class="card-title">{{ livro.descricao }}</h5>
+                    <p class="card-text">
+                        {{ livro.autor.nome }}
+                    </p>
+                    {% if livro.estoque %}
+                        {% if livro.desconto %}
+                            <s>R$ {{livro.valor}}</s>
+                            <h5>R$ {{ livro.valor|valor_descontado:livro.desconto }} </h5>
+                            <p><span class="badge rounded-pill bg-success">Desconto {{ livro.desconto }}%</span></p>
+                        {% else %}
+                            <h5>R$ {{livro.valor}}</h5>
+                        {% endif %}
+                        <p><a href="{% url 'adiciona_carrinho' livro.id %}" class="btn btn-primary"><i class="bi bi-tag-fill"></i> Comprar</a></p>
+                    {% else %}
+                        <p><a href="#" class="btn btn-secondary disabled"><i class="bi bi-tag-fill"></i> Indisponível</a></p>
+                    {% endif %}
+                        <p>   
+                        {% for categoria in livro.categorias.all %}
+                            <span class="badge rounded-pill bg-info">{{ categoria.descricao }}</span>
+                        {% endfor %%}                       
+                    </p>
+                </div>
+            </div>
+            </a>
+        </div>
+        {% endfor %}
+    </div>

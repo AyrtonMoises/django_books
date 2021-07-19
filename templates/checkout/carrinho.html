@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+{% load widget_tweaks %}
+
+{% block content %}
+<div class="px-4 mb-4">
+    <h3>Carrinho de compras</h3>
+    <p>Adicione mais produtos ou finalize sua compra</p>
+    {% include 'partials/_alertas.html' %}
+    <form class="" action="" method="POST">
+    {% csrf_token %}
+    {{ formset.management_form }}
+        <table class="table">
+            <thead>
+            <tr>
+                <th>Produto</th>
+                <th>Valor</td>
+                <th>Quantidade</th>
+                <th></th>
+            </tr>
+            </thead>
+            <tbody>          
+                {% for form in formset %}
+                <tr>
+                    <td>{{ form.instance.livro }}</td>
+                    <td>{{ form.instance.valor|floatformat:"2" }}</td>
+                    <td>{% render_field form.quantidade class="form-control w-25" %}</td>
+                    <td class="text-center">
+                        <button value="on" type="submit" class="btn btn-danger" name="{{ form.DELETE.html_name }}">Remover</button>
+                        {{ form.id }}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <div>
+            <a href="{% url 'home' %}" class="float-start btn btn-secondary">Continuar comprando</a>
+            <a href="{% url 'finaliza_compra' %}" class="float-end btn btn-success mx-2">Finalizar compra</a>
+            <button type="submit" class="float-end btn btn-primary mx-2">Atualizar</a>
+        </div>
+    </form>
+</div>
+
+{% endblock %}

@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import Editora, Autor, Categoria, Livro, Promocao
+from .models import Editora, Autor, Categoria, Livro
 
 from .forms import CategoriaForm, LivroForm
 
@@ -18,7 +18,6 @@ class AutorAdmin(admin.ModelAdmin):
     list_display_links = ('id', 'nome',)
     list_editable = ('ativo',)
     list_filter = ('ativo',)
-
     list_per_page = 15
 
 
@@ -31,34 +30,43 @@ class CategoriaAdmin(admin.ModelAdmin):
 
 class LivroAdmin(admin.ModelAdmin):
     readonly_fields = ["data_criacao"]
-    list_display = ('id', 'descricao', 'editora', 'autor', 'estoque', 'valor', 'ativo',)
+    list_display = ('id', 'descricao', 'editora', 'autor', 'valor', 'desconto', 'estoque', 'ativo',)
     list_display_links = ('id', 'descricao',)
     list_filter = ('categorias',)
     list_editable = ('ativo',)
     list_per_page = 15
+    actions = ['desconto_10','remover_desconto',]
     form = LivroForm
     fieldsets = (
         ('Principais informações', {
-            'fields': ('imagem', 'descricao', 'detalhes', 'ean', 'autor',
-                       'editora', 'categorias', ('ano', 'edicao'),
+            'fields': ('imagem', 'descricao', 'detalhes', 'isbn', 'ean', 
+                        'autor', 'editora', 'categorias', ('ano', 'edicao'),
                        'encadernacao', ('idioma', 'pais'),)
         }),
         ('Disponibilidade e valor', {
-            'fields': ('valor', 'estoque', 'ativo',)
+            'fields': ('valor', 'desconto', 'estoque', 'ativo',)
         })
     )
 
+    def desconto_10(self, request, queryset):
+        desconto = 10  # percentual
 
-class PromocaoAdmin(admin.ModelAdmin):
-    list_display = ('id', 'descricao', 'data_inicio','data_fim', 'ativo',)
-    list_display_links = ('id', 'descricao',)
-    list_editable = ('ativo',)
-    list_filter = ('ativo',)
+        for livro in queryset:
+            """ Aplica desconto de 10% nos produtos selecionados """
+            livro.desconto = desconto
+            livro.save(update_fields=['desconto'])
+    desconto_10.short_description = 'Aplicar 10%% de desconto'
 
-    list_per_page = 15
+    def remover_desconto(self, request, queryset):
+        desconto = 0  # percentual
+
+        for livro in queryset:
+            """ Remove desconto nos produtos selecionados """
+            livro.desconto = desconto
+            livro.save(update_fields=['desconto'])
+    remover_desconto.short_description = 'Remover desconto'
 
 admin.site.register(Editora, EditoraAdmin)
 admin.site.register(Autor, AutorAdmin)
 admin.site.register(Categoria, CategoriaAdmin)
 admin.site.register(Livro, LivroAdmin)
-admin.site.register(Promocao, PromocaoAdmin)

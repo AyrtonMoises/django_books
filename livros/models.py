@@ -1,5 +1,6 @@
 import datetime
-from django.core.validators import MaxValueValidator, MinValueValidator
+
+from django.core.validators import MaxValueValidator, MinValueValidator, MinLengthValidator
 from django.db import models
 from django.utils import timezone
 from django.dispatch import receiver
@@ -19,7 +20,6 @@ def max_value_current_year(value):
 class Editora(models.Model):
     descricao = models.CharField(max_length=150, verbose_name='Descrição')
     ativa = models.BooleanField()
-    imagem = ResizedImageField(size=[500, 300], quality=70, upload_to='editoras/', blank=True, null=True)
 
     class Meta:
         verbose_name_plural = "Editoras"
@@ -39,6 +39,7 @@ class Categoria(models.Model):
 
     def __str__(self):
         return self.descricao
+
 
 class Autor(models.Model):
     nome = models.CharField(max_length=150)
@@ -65,7 +66,7 @@ class Autor(models.Model):
 class Livro(models.Model):
     descricao = models.CharField(max_length=150, verbose_name='Descrição')
     detalhes = models.TextField(blank=True, null=True)
-    isbn = models.CharField(max_length=13, verbose_name='ISBN')
+    isbn = models.CharField(max_length=13, validators=[MinLengthValidator(13),], verbose_name='ISBN')
     ano = models.PositiveSmallIntegerField(validators=[max_value_current_year,])
     edicao = models.PositiveSmallIntegerField(default=1, null=True, verbose_name='Edição')
     encadernacao = models.PositiveSmallIntegerField(choices=TIPOS_ENCARDENACAO, verbose_name='Encadernação')
@@ -74,43 +75,13 @@ class Livro(models.Model):
     ean = models.CharField(max_length=13, verbose_name='EAN')
     ativo = models.BooleanField()
     imagem = ResizedImageField(size=[500, 300], quality=70, upload_to='livros/', blank=True, null=True)
-    valor = models.DecimalField(max_digits=6, decimal_places=2)
+    valor = models.DecimalField(max_digits=8, decimal_places=2)
     autor = models.ForeignKey(Autor, on_delete=models.CASCADE, related_name='autor_livro')
     editora = models.ForeignKey(Editora, on_delete=models.CASCADE, related_name='editora_livro')
     categorias = models.ManyToManyField(Categoria)
     data_criacao = models.DateField(default=timezone.now, verbose_name='Data de criação')
     estoque = models.PositiveSmallIntegerField()
-
-    def __str__(self):
-        return self.descricao
-
-    @property
-    def melhor_desconto(self):
-        """Retorna promoção de maior desconto ao livro dentro da data e se ativo"""
-        melhor_desconto = 0
-        for categoria in self.categorias.all():
-            promocao = Promocao.objects.filter(
-                categorias__pk=categoria.pk, ativo=True,
-                data_inicio__lte=datetime.date.today(),
-                data_fim__gte=datetime.date.today()
-                ).order_by('-desconto').first()
-            if promocao:
-                if melhor_desconto < promocao.desconto:
-                    melhor_desconto = promocao.desconto
-        return melhor_desconto
-
-
-class Promocao(models.Model):
-    descricao = models.CharField(max_length=150, verbose_name='Descrição')
-    desconto = models.PositiveSmallIntegerField(validators=[MinValueValidator(1), MaxValueValidator(99)])
-    data_inicio = models.DateField()
-    data_fim = models.DateField()
-    categorias = models.ManyToManyField(Categoria, related_name='categorias_promocao')
-    ativo = models.BooleanField()
-
-    class Meta:
-        verbose_name_plural = "Promoções"
-        verbose_name = "Promoção"
+    desconto = models.PositiveSmallIntegerField(default=0, validators=[MaxValueValidator(99)])
 
     def __str__(self):
         return self.descricao

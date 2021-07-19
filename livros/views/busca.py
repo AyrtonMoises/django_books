@@ -12,10 +12,12 @@ def busca(request):
         if request.GET['palavra_buscada'] != '':
             palavra_buscada = request.GET['palavra_buscada']
             livros = livros.filter(
-                        Q(descricao__icontains=palavra_buscada) | 
-                        Q(editora__descricao__icontains=palavra_buscada) |
-                        Q(autor__nome__icontains=palavra_buscada)
-                    )
+                        (
+                            Q(descricao__icontains=palavra_buscada) | 
+                            Q(editora__descricao__icontains=palavra_buscada) |
+                            Q(autor__nome__icontains=palavra_buscada) 
+                        ), ativo=True
+                    ).order_by('-estoque')
     dados = { 
         'livros': livros
     }
