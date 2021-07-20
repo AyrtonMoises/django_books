@@ -2,6 +2,11 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib import messages
 from django.forms import modelformset_factory
 from django.contrib.auth.decorators import login_required
+from django.urls import reverse
+
+from paypal.standard.forms import PayPalPaymentsForm
+from paypal.standard.models import ST_PP_COMPLETED
+from paypal.standard.ipn.signals import valid_ipn_received
 
 from livros.models import Livro
 from .models import Carrinho, Pedido
@@ -67,7 +72,45 @@ def finaliza_compra(request):
             usuario=request.user, carrinho_itens=carrinho_itens
         )
         messages.success(request, 'Seu pedido foi finalizado com sucesso!')
+        carrinho_itens.delete()
     else:
         messages.info(request, 'Não há itens no carrinho de compras')
         return redirect('carrinho')
-    return render(request, 'checkout/finaliza_compra.html')
+    dados = {
+        'pedido': pedido
+    }
+    return render(request, 'checkout/finaliza_compra.html', dados)
+
+
+def paypal(request, **kwargs):
+    pedido_pk = kwargs.get('pk')
+    pedido = get_object_or_404(
+        Pedido.objects.filter(usuario=request.user), pk=pedido_pk
+    )
+    paypal_dict = pedido.paypal()
+    paypal_dict['return_url'] = request.build_absolute_uri(
+        reverse('pedidos')
+    )
+    paypal_dict['cancel_return'] = request.build_absolute_uri(
+        reverse('pedidos')
+    )
+    paypal_dict['notify_url'] = request.build_absolute_uri(
+        reverse('paypal-ipn')
+    )
+    form = PayPalPaymentsForm(initial=paypal_dict)
+    dados = {
+        'form': form
+    }
+    return render(request, 'checkout/paypal.html', dados) 
+
+def paypal_notification(sender, **kwargs):
+    ipn_obj = sender
+    if ipn_obj.payment_status == ST_PP_COMPLETED and \
+        ipn_obj.receiver_email == settings.PAYPAL_EMAIL:
+        try:
+            order = Order.objects.get(pk=ipn_obj.invoice)
+            order.complete()
+        except Order.DoesNotExist:
+            pass
+
+valid_ipn_received.connect(paypal_notification)

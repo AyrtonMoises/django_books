@@ -2,6 +2,9 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import auth, messages
 from django.contrib.auth import get_user_model
 from django.contrib.auth.decorators import login_required
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+
+from checkout.models import Pedido
 
 
 User = get_user_model()
@@ -84,7 +87,7 @@ def alterar_senha(request):
         usuario.save()
         messages.success(request, 'Senha atualizada com sucesso')
         return redirect('login')
-    return render(request, 'usuarios/alterar-senha.html')
+    return render(request, 'usuarios/perfil/alterar-senha.html')
 
 @login_required
 def perfil(request):
@@ -101,4 +104,18 @@ def perfil(request):
         usuario.save()
         messages.success(request, 'Perfil atualizado com sucesso')
         return redirect('perfil')
-    return render(request, 'usuarios/perfil.html')
+    return render(request, 'usuarios/perfil/atualizar-perfil.html')
+
+
+@login_required
+def pedidos(request):
+    """Pedidos do usuário"""
+    pedidos = Pedido.objects.filter(usuario=request.user)
+    paginator = Paginator(pedidos, 5)
+    page = request.GET.get('page')
+    pedidos_por_pagina = paginator.get_page(page)
+
+    dados = {
+        'pedidos': pedidos_por_pagina
+    }
+    return render(request, 'usuarios/perfil/pedidos.html', dados)

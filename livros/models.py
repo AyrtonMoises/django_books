@@ -53,7 +53,6 @@ class Autor(models.Model):
     def __str__(self):
         return self.nome
     
-    @property
     def categorias_autor(self):
         """Lista categorias de livros do autor"""
         categorias = []

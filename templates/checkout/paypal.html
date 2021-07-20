@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+
+
+{% block content %}
+<h3>Pagamento via Paypal</h3>
+
+<div class="page-header">
+    <h1>Você está sendo redirecionado para o paypal</h1>
+</div>
+<div id="paypal" class="row">
+    {{ form.render }}
+</div>
+
+<script type="text/javascript">
+    $(function(){
+        $("#paypal form").submit();
+    });
+</script>
+
+{% endblock %}
+
+

@@ -1,0 +1,23 @@
+{% extends 'usuarios/perfil/index.html' %}
+
+{% block content_perfil %}
+      <h6 class="text-secondary">Alterar senha</h6>
+      <form action="{% url 'alterar_senha' %}" method="POST">
+      {% csrf_token %}
+      <div class="mb-3">
+        <label for="senha_atual" class="form-label">Senha atual</label>
+        <input type="password" class="form-control" name="senha_atual" value="" required>
+      </div>
+      <div class="mb-3">
+        <label for="senha1" class="form-label">Nova Senha</label>
+        <input type="password" class="form-control" name="senha1" value="" required >
+      </div>
+      <div class="mb-3">
+        <label for="senha2" class="form-label">Confirmar senha</label>
+        <input type="password" class="form-control" name="senha2" value="" required >
+      </div>
+        <button class="btn btn-success" type="submit"><i class="bi bi-check-lg"></i>Alterar Senha</button>
+        </div>
+      </form>
+
+{% endblock %}

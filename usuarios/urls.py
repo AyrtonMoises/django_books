@@ -1,6 +1,6 @@
 from django.urls import path
 
-from usuarios.views import login, logout, cadastro, perfil, alterar_senha
+from usuarios.views import *
 
 
 urlpatterns = [
@@ -9,4 +9,5 @@ urlpatterns = [
     path('cadastro/', cadastro, name='cadastro'),
     path('perfil/', perfil, name='perfil'),
     path('alterar_senha/', alterar_senha, name='alterar_senha'),
+    path('pedidos/', pedidos, name='pedidos'),
 ] 

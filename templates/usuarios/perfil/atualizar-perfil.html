@@ -1,0 +1,23 @@
+{% extends 'usuarios/perfil/index.html' %}
+
+{% block content_perfil %}
+      <h6 class="text-secondary">Alterar dados</h6>
+
+      <form action="{% url 'perfil' %}" method="POST">
+      {% csrf_token %}
+        <div class="mb-3">
+          <label for="nome" class="form-label">Nome</label>
+          <input type="nome" class="form-control" name="nome" value="{{ user.username }}" required>
+        </div>
+        <div class="mb-3">
+          <label for="email" class="form-label">Email</label>
+          <input type="email" class="form-control" name="email" placeholder="seunome@email.com" value="{{ user.email }}" required >
+        </div>
+        <div class="mb-3">
+          <label class="form-label">Membro desde: {{ user.date_joined }}</label>
+        </div>
+        <button class="btn btn-success" type="submit"><i class="bi bi-check-lg"></i>Atualizar cadastro</button>
+        </div>
+      </form>
+
+{% endblock %}
