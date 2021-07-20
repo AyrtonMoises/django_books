@@ -9,5 +9,4 @@ urlpatterns = [
     path('', include('livros.urls')),
     path('', include('usuarios.urls')),
     path('', include('checkout.urls')),
-    path('', include('paypal.standard.ipn.urls')),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

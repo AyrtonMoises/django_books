@@ -72,7 +72,6 @@ class Pedido(models.Model):
     FORMAS_PAGAMENTO_CHOICES = (
         ('deposit', 'Depósito'),
         ('pagseguro', 'PagSeguro'),
-        ('paypal', 'Paypal'),
     )
 
     usuario = models.ForeignKey(
@@ -106,28 +105,6 @@ class Pedido(models.Model):
         ).get('total')
         return total
 
-    def complete(self):
-        self.status = 1
-        self.save()
-
-    def paypal(self):
-        self.payment_option = 'paypal'
-        self.save()
-        paypal_dict = {
-            'upload': '1',
-            'business': settings.PAYPAL_EMAIL,
-            'invoice': self.pk,
-            'cmd': '_cart',
-            'currency_code': 'BRL',
-            'charset': 'utf-8',
-        }
-        index = 1
-        for item in self.pedido_itens.all():
-            paypal_dict['amount_{}'.format(index)] = '%.2f' % item.valor
-            paypal_dict['item_name_{}'.format(index)] = item.livro.descricao
-            paypal_dict['quantity_{}'.format(index)] = item.quantidade
-            index = index + 1
-        return paypal_dict
 
 class PedidoItem(models.Model):
     pedido = models.ForeignKey(

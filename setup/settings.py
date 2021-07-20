@@ -41,7 +41,6 @@ INSTALLED_APPS = [
     # libs
     'django_resized',
     'widget_tweaks',
-    'paypal.standard.ipn',
     # django
     'django.contrib.admin',
     'django.contrib.auth',
@@ -161,8 +160,5 @@ MESSAGE_TAGS = {
 }
 
 LOGIN_URL = '/login/'
-
-PAYPAL_TEST = True
-PAYPAL_EMAIL = 'ayrton.sousa@gmail.com'
 
 django_heroku.settings(locals())

@@ -4,6 +4,6 @@
 
 {% include 'partials/_alertas.html' %}
 <h3>Pedido #{{ pedido.pk }}</h3>
-<a class="btn btn-success" href="{% url 'paypal' pedido.pk %}">Pagar com Paypal</a>
+<a class="btn btn-success" href="{% url 'pagseguro' pedido.pk %}">Pagar com Pagseguro</a>
 
 {% endblock %}
