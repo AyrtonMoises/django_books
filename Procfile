@@ -1,0 +1,1 @@
+web: gunicorn pasta_do_settings.wsgi
