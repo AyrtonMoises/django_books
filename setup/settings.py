@@ -161,10 +161,10 @@ MESSAGE_TAGS = {
 
 LOGIN_URL = '/login/'
 
-PAGSEGURO_TOKEN = env('PAGSEGURO_TOKEN')
-PAGSEGURO_EMAIL = env('PAGSEGURO_EMAIL')
-PAGSEGURO_SANDBOX = env('PAGSEGURO_SANDBOX')
+PAGSEGURO_TOKEN = 'B9CAB777D4764CB9BA4BA339C8CEFE27'
+PAGSEGURO_EMAIL = 'ayrton.sousa@gmail.com'
+PAGSEGURO_SANDBOX = True
 
 
-if not DEBUG:
-    django_heroku.settings(locals())
+#if not DEBUG:
+#    django_heroku.settings(locals())
