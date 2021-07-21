@@ -1,1 +1,1 @@
-web: gunicorn pasta_do_settings.wsgi
+web: gunicorn setup.wsgi
