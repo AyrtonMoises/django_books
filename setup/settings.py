@@ -17,7 +17,10 @@ import django_heroku
 import environ
 
 env = environ.Env(
-    DEBUG=(bool, False)
+    DEBUG=(bool, False),
+    PAGSEGURO_TOKEN=(str, 'token'),
+    PAGSEGURO_EMAIL=(str, 'email@exemplo.com'),
+    PAGSEGURO_SANDBOX=(bool, True),
 )
 
 environ.Env.read_env()
@@ -165,6 +168,7 @@ PAGSEGURO_TOKEN = env('PAGSEGURO_TOKEN')
 PAGSEGURO_EMAIL = env('PAGSEGURO_EMAIL')
 PAGSEGURO_SANDBOX = env('PAGSEGURO_SANDBOX')
 
+print(PAGSEGURO_TOKEN, PAGSEGURO_EMAIL, PAGSEGURO_SANDBOX)
 
 if not DEBUG:
     django_heroku.settings(locals())
