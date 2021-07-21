@@ -2,6 +2,8 @@ from django.db import models
 from django.db.models import Sum, F
 from django.conf import settings
 
+from pagseguro import PagSeguro
+
 from livros.models import Livro
 
 
@@ -105,6 +107,34 @@ class Pedido(models.Model):
         ).get('total')
         return total
 
+    def pagseguro_update_status(self, status):
+        if status == '3':
+            self.status = 1
+        elif status == '7':
+            self.status = 2
+        self.save()
+    
+    def pagseguro(self):
+        pg = PagSeguro(
+            email=settings.PAGSEGURO_EMAIL, token=settings.PAGSEGURO_TOKEN,
+            config={'sandbox': settings.PAGSEGURO_SANDBOX}
+        )
+        pg.sender = {
+            'email': self.usuario.email
+        }
+        pg.reference_prefix = None
+        pg.shipping = None
+        pg.reference = self.pk
+        for item in self.pedido_itens.all():
+            pg.items.append(
+                {
+                    'id': item.livro.pk,
+                    'description': item.livro.descricao,
+                    'quantity': item.quantidade,
+                    'amount': '%.2f' % item.valor
+                }
+            )
+        return pg
 
 class PedidoItem(models.Model):
     pedido = models.ForeignKey(

@@ -2,6 +2,9 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib import messages
 from django.forms import modelformset_factory
 from django.contrib.auth.decorators import login_required
+from django.urls import reverse
+from django.views.decorators.csrf import csrf_exempt
+from django.http import HttpResponse
 
 from livros.models import Livro
 from .models import Carrinho, Pedido
@@ -77,5 +80,36 @@ def finaliza_compra(request):
     return render(request, 'checkout/finaliza_compra.html', dados)
 
 
-def pagseguro(request):
-    ...
+def pagseguro(request, **kwargs):
+    pedido_pk = kwargs.get('pk')
+    pedido = get_object_or_404(
+        Pedido.objects.filter(usuario=request.user), pk=pedido_pk
+    )
+    pg = pedido.pagseguro()
+    pg.redirect_url = request.build_absolute_uri(
+        reverse('pedidos')
+    )
+    pg.notification_url = request.build_absolute_uri(
+        reverse('pagseguro_notification')
+    )
+    response = pg.checkout()
+    return redirect(response.payment_url)
+
+@csrf_exempt
+def pagseguro_notification(request):
+    notification_code = request.POST.get('notificationCode', None)
+    if notification_code:
+        pg = PagSeguro(
+            email=settings.PAGSEGURO_EMAIL, token=settings.PAGSEGURO_TOKEN,
+            config={'sandbox': settings.PAGSEGURO_SANDBOX}
+        )
+        notification_data = pg.check_notification(notification_code)
+        status = notification_data.status
+        reference = notification_data.reference
+        try:
+            pedido = Pedido.objects.get(pk=reference)
+        except Pedido.DoesNotExist:
+            pass
+        else:
+            pedido.pagseguro_update_status(status)
+    return HttpResponse('OK')

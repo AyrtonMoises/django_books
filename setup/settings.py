@@ -14,6 +14,13 @@ from pathlib import Path
 import os
 
 import django_heroku
+import environ
+
+env = environ.Env(
+    DEBUG=(bool, False)
+)
+
+environ.Env.read_env()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -23,10 +30,10 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/3.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-y*!3gq41nb#7s%1$$2lm--l9g(p0%6_g!j+$ffp^w+(tkuxs%s'
+SECRET_KEY = env('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = env('DEBUG')
 
 ALLOWED_HOSTS = []
 
@@ -90,14 +97,7 @@ WSGI_APPLICATION = 'setup.wsgi.application'
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'django_books',
-        'PORT': 5432,
-        'USER': 'postgres',
-        'PASSWORD': '123mudar',
-        'HOST': 'localhost'
-    }
+    'default': env.db()
 }
 
 
@@ -161,4 +161,10 @@ MESSAGE_TAGS = {
 
 LOGIN_URL = '/login/'
 
-django_heroku.settings(locals())
+PAGSEGURO_TOKEN = env('PAGSEGURO_TOKEN')
+PAGSEGURO_EMAIL = env('PAGSEGURO_EMAIL')
+PAGSEGURO_SANDBOX = env('PAGSEGURO_SANDBOX')
+
+
+if not DEBUG:
+    django_heroku.settings(locals())
