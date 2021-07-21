@@ -6,6 +6,8 @@ from django.urls import reverse
 from django.views.decorators.csrf import csrf_exempt
 from django.http import HttpResponse
 
+from pagseguro import PagSeguro
+
 from livros.models import Livro
 from .models import Carrinho, Pedido
 
