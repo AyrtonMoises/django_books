@@ -11,10 +11,11 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 """
 
 from pathlib import Path
-import os
+import os, sys
 
 import django_heroku
 import environ
+
 
 env = environ.Env(
     DEBUG=(bool, False),
@@ -143,7 +144,7 @@ USE_TZ = True
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
 STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, 'setup\static')
+    os.path.join(BASE_DIR, 'static')
 ]
 
 # Default primary key field type
@@ -168,5 +169,10 @@ PAGSEGURO_TOKEN = env('PAGSEGURO_TOKEN')
 PAGSEGURO_EMAIL = env('PAGSEGURO_EMAIL')
 PAGSEGURO_SANDBOX = env('PAGSEGURO_SANDBOX')
 
+PROJECT_ROOT = os.path.dirname(__file__)
+sys.path.insert(0, os.path.join(PROJECT_ROOT, '../apps'))
+
 if not DEBUG:
     django_heroku.settings(locals())
+
+    
