@@ -50,8 +50,9 @@ INSTALLED_APPS = [
     'usuarios',
     'checkout',
     # libs
-    'django_resized',
     'widget_tweaks',
+    'django_resized',
+    'easy_thumbnails',
     # django
     'django.contrib.admin',
     'django.contrib.auth',
@@ -174,7 +175,56 @@ PAGSEGURO_SANDBOX = env('PAGSEGURO_SANDBOX')
 PROJECT_ROOT = os.path.dirname(__file__)
 sys.path.insert(0, os.path.join(PROJECT_ROOT, '../apps'))
 
+# Cache
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.db.DatabaseCache',
+        'LOCATION': 'cache'
+    }
+}
+
+# Logging
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'filters': {
+        'require_debug_false': {
+            '()': 'django.utils.log.RequireDebugFalse',
+        },
+        'require_debug_true': {
+            '()': 'django.utils.log.RequireDebugTrue',
+        },
+    },
+    'formatters': {
+        'verbose': {
+            'format': '%(levelname)s %(asctime)s %(module)s %(process)d %(thread)d %(message)s'
+        },
+        'simple': {
+            'format': '%(levelname)s %(message)s'
+        },
+    },
+    'handlers': {
+        'checkout.views': {
+            'class': 'logging.FileHandler',
+            'level': 'DEBUG',
+            'filters': ['require_debug_true'],
+            'filename': os.path.join(BASE_DIR, 'checkout.views.log'),
+        }
+    },
+    'loggers': {
+        'checkout.views': {
+            'handlers': ['checkout.views'],
+            'level': 'DEBUG',
+        }
+    }
+}
+
+# Thumbnails
+THUMBNAIL_ALIASES = {
+    '': {
+        'livro_img': {'size': (156, 200), 'crop': True },
+    }
+}
+
 if not DEBUG:
     django_heroku.settings(locals())
-
-    

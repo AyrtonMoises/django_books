@@ -1,3 +1,5 @@
+import logging
+
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib import messages
 from django.forms import modelformset_factory
@@ -11,6 +13,8 @@ from pagseguro import PagSeguro
 
 from livros.models import Livro
 from .models import Carrinho, Pedido
+
+logger = logging.getLogger('checkout.views')
 
 
 def carrinho(request):
@@ -49,6 +53,7 @@ def carrinho(request):
 def adiciona_carrinho(request, livro_id):
     """ Adiciona livro ao carrinho """
     livro = get_object_or_404(Livro, pk=livro_id)
+    logger.debug('Livro %s adicionado ao carrinho' % livro)
     if request.session.session_key is None:
         request.session.save()
     carrinho_item, created = Carrinho.objects.adiciona_item(
