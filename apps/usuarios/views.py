@@ -5,6 +5,7 @@ from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
 from checkout.models import Pedido
+from .forms import PerfilForm
 
 
 User = get_user_model()
@@ -31,10 +32,10 @@ def login(request):
                     return redirect(proxima_pagina)
                 return redirect('home')
             else:
-                messages.error(request, "Email ou Senha está incorreto")
+                messages.error(request, "Email/Senha estão incorretos")
                 return render(request, 'usuarios/login.html')
         else:
-            messages.error(request, "Email ou Senha está incorreto")
+            messages.error(request, "Email/Senha estão incorretos")
             return render(request, 'usuarios/login.html')
     return render(request, 'usuarios/login.html')
 
@@ -50,7 +51,7 @@ def cadastro(request):
         email = request.POST['email']
         senha1 = request.POST['senha1']
         senha2 = request.POST['senha2']
-        if nome == '' or senha1 == '':
+        if nome == '' or senha1 == '' or email == '':
             return redirect('cadastro')
         if senha1 != senha2:
             messages.error(request, 'As senhas não são iguais')
@@ -65,6 +66,18 @@ def cadastro(request):
         messages.success(request, 'Usuário cadastrado com sucesso')
         return redirect('login')
     return render(request, 'usuarios/cadastro.html')
+
+@login_required
+def perfil(request):
+    """Atualiza dados de perfil do usuário"""
+    usuario = get_object_or_404(User, pk=request.user.pk)
+    form = PerfilForm(request.POST or None, instance=usuario)
+    if request.POST:
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Perfil atualizado com sucesso')
+            return redirect('perfil')
+    return render(request, 'usuarios/perfil/atualizar-perfil.html', { 'form' : form })
 
 @login_required
 def alterar_senha(request):
@@ -88,24 +101,6 @@ def alterar_senha(request):
         messages.success(request, 'Senha atualizada com sucesso')
         return redirect('login')
     return render(request, 'usuarios/perfil/alterar-senha.html')
-
-@login_required
-def perfil(request):
-    """Cadastro do usuário"""
-    if request.POST:
-        nome = request.POST['nome']
-        email = request.POST['email']
-        if not nome or not email:
-            messages.error(request, 'Campos Nome e Email são obrigatórios')
-            return redirect('perfil')
-        usuario = User.objects.get(pk=request.user.pk)
-        usuario.username = nome
-        usuario.email = email
-        usuario.save()
-        messages.success(request, 'Perfil atualizado com sucesso')
-        return redirect('perfil')
-    return render(request, 'usuarios/perfil/atualizar-perfil.html')
-
 
 @login_required
 def pedidos(request):

@@ -166,7 +166,9 @@ MESSAGE_TAGS = {
     messages.SUCCESS: 'success',
 }
 
-LOGIN_URL = '/login/'
+LOGIN_URL = 'login'
+LOGIN_REDIRECT_URL = 'home'
+LOGOUT_URL = 'logout'
 
 PAGSEGURO_TOKEN = env('PAGSEGURO_TOKEN')
 PAGSEGURO_EMAIL = env('PAGSEGURO_EMAIL')
@@ -175,13 +177,6 @@ PAGSEGURO_SANDBOX = env('PAGSEGURO_SANDBOX')
 PROJECT_ROOT = os.path.dirname(__file__)
 sys.path.insert(0, os.path.join(PROJECT_ROOT, '../apps'))
 
-# Cache
-CACHES = {
-    'default': {
-        'BACKEND': 'django.core.cache.backends.db.DatabaseCache',
-        'LOCATION': 'cache'
-    }
-}
 
 # Logging
 LOGGING = {

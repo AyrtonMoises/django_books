@@ -5,7 +5,7 @@
    <div class="row row-cols-1 row-cols-md-6 g-4">
         {% for livro in livros %}
         <div class="col">
-            <a class="text-decoration-none text-dark" href="{% url 'livro_detalhes' livro.id %}">
+            <a class="text-decoration-none text-dark" href="{{ livro.get_absolute_url }}">
             <div class="card">
                 {% if livro.imagem == '' %}
                 <img class="card-img-top" height="200px" src="{% static 'img/livro_default.jpg' %}" alt="{{ livro.descricao }}">

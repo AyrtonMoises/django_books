@@ -5,6 +5,7 @@ from django.db import models
 from django.utils import timezone
 from django.dispatch import receiver
 from django.db.models.signals import post_save
+from django.urls import reverse
 
 from django_resized import ResizedImageField
 
@@ -72,7 +73,7 @@ class Livro(models.Model):
     idioma = models.PositiveSmallIntegerField(default=1, choices=IDIOMAS, null=True)
     pais = models.CharField(default='BRA', max_length=3, choices=PAISES, blank=True, null=True)
     ean = models.CharField(max_length=13, verbose_name='EAN')
-    ativo = models.BooleanField()
+    ativo = models.BooleanField(default=True)
     imagem = ResizedImageField(size=[500, 300], quality=70, upload_to='livros/', blank=True, null=True)
     valor = models.DecimalField(max_digits=8, decimal_places=2)
     autor = models.ForeignKey(Autor, on_delete=models.CASCADE, related_name='autor_livro')
@@ -83,6 +84,9 @@ class Livro(models.Model):
 
     def __str__(self):
         return self.descricao
+
+    def get_absolute_url(self):
+        return reverse('livro_detalhes', kwargs={'livro_id': self.pk })
 
 
 @receiver(post_save, sender=Editora)
