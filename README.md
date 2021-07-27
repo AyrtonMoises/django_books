@@ -1,11 +1,8 @@
 # Django Books
 Loja virtual de livros simples usando o framework Django 
 
-#### Exemplo online no Heroku
-
-```
+### Exemplo no Heroku
 https://django-books-ecommerce.herokuapp.com/
-```
 
 ### Instalação
 #### Clonar repositório
