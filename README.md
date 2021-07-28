@@ -29,15 +29,22 @@ PAGSEGURO_EMAIL=SEU_EMAIL_PAGSEGURO
 PAGSEGURO_SANDBOX=True
 ```
 
-#### Testes
+#### Migrações
+```
+python manage.py migrate
+```
+### Arquivos estáticos
+```
+python manage.py collectstatic
+```
 
+#### Testes
 ```
 python manage.py test apps
 python manage.py test apps/nome_do_app
 ```
 
 #### Execução
-
 ```
 python manage.py runserver
 ```
